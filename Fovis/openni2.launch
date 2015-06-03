@@ -1,0 +1,10 @@
+<launch>
+
+
+	<include file="$(find openni_launch)/launch/openni.launch">
+	</include>
+
+ <node pkg="dynamic_reconfigure" type="dynparam" name="dynparam" args="set /camera/driver depth_registration true" />
+
+	
+</launch>

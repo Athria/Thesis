@@ -1,0 +1,32 @@
+<launch>
+  <!-- This should be the same as used with openni_launch -->
+
+  <arg name="camera" default="camera" />
+
+  <!-- Factory-calibrated depth registration -->
+  <arg name="depth_registration"              default="true"/>
+  <arg     if="$(arg depth_registration)" name="depth" value="depth_registered" />
+  <arg unless="$(arg depth_registration)" name="depth" value="depth" />
+
+  <!-- Processing Modules -->
+  <arg name="rgb_processing"                  default="true"/>
+  <arg name="ir_processing"                   default="true"/>
+  <arg name="depth_processing"                default="true"/>
+  <arg name="depth_registered_processing"     default="true"/>
+  <arg name="disparity_processing"            default="true"/>
+  <arg name="disparity_registered_processing" default="true"/>
+  <arg name="scan_processing"                 default="true"/>
+
+
+  <include file="$(find openni_launch)/launch/openni.launch">
+  </include>
+
+
+  <node pkg="fovis_ros" type="fovis_mono_depth_odometer" name="kinect_odometer" >
+    <remap from="/camera/rgb/image_rect" to="/camera/rgb/image_rect_mono" />
+    <remap from="/camera/rgb/camera_info" to="/camera/rgb/camera_info" />
+    <remap from="/camera/depth_registered/camera_info" to="/camera/depth_registered/sw_registered/camera_info" />
+    <remap from="/camera/depth_registered/image_rect" to="/camera/depth_registered/image_rect" />
+    <param name="approximate_sync" type="bool" value="True" />
+  </node>
+</launch>

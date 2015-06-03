@@ -1,0 +1,37 @@
+<launch>
+
+	<!-- Arguments -->
+	<arg name="camera" default="/stereo" /> <!-- The namespace where images are published -->
+
+
+	<!-- Run the camera -->
+        <group ns="stereo" >
+	        <node pkg="uvc_camera" type="uvc_stereo_node" name="uvc_stereo_node">
+		</node>
+	</group>
+
+	<!-- Run the ROS package stereo_image_proc -->
+	<group ns="$(arg camera)" >
+		<node pkg="stereo_image_proc" type="stereo_image_proc" name="stereo_image_proc">
+		</node>
+	</group>
+
+	<!-- Publish transforms -->
+
+	<node pkg="tf" type="static_transform_publisher" name="camera_broadcaster" args="1 0 0 0 0 0 1 base_link camera 100" />
+
+	<node pkg="tf" type="static_transform_publisher" name="odom_broadcaster" args="1 0 0 0 0 0 1 map odom 100" />
+
+	<!-- Run the viso2_ros package -->
+  
+	<node pkg="viso2_ros" type="stereo_odometer" name="stereo_odometer" output="screen">
+		<remap from="stereo" to="$(arg camera)"/>
+		<remap from="image" to="image_rect"/>
+	</node>
+	
+	
+	<node pkg="rviz" type="rviz" name="rviz">
+	</node>
+	
+
+</launch>
